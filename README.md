@@ -25,7 +25,16 @@ cd price-tracker; bokeh serve --show app.py
 A tab should pop up in your browser, if not manually go to http://localhost:5006/app
 
 ## MVP Design:
+The price tracker has the following component:
+- Scheduler: it allows scheduling different currency at different rpc call cadence, for example, here we register `btceur` and `btcusd` both at 10 second interval
+- Data Fetcher: it does the RPC call to the cryptowat REST API, validate response and persist the data into a csv file
+- CSV file: as MVP, csv is the easiest way to store data, the file is organized in buckets like `/data/<currency>/<YYYY-MM-DD-HH>.csv`. This makes fetching data for past 24h faster. For exampe:
+  - `/data/btceur/2021-10-30-15.csv` has the data fetched from 15:00 to 15:59 on Oct 30th
+  - `/data/btcuds/2021-10-30-16.csv`
+- Data Processor: it reads data from csv files with a given time range, calculate standard deviation and ranking, expose API for UI to consume
 ![Screenshot](mvp_design.png)
+
+## Future Work
 
 
 Scalability: what would you change if you needed to track many metrics? What if you needed to sample them more frequently? what if you had many users accessing your dashboard to view metrics?
