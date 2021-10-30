@@ -16,6 +16,7 @@ git clone https://github.com/bjjiangfs/price-tracker.git
 ```
 pip install bokeh
 ```
+If you get `No module found` errors  for `requests` and `schedule`. Please do `pip install requests` and `pip install schedule`
 
 3. Cd into the repo and run the webserver
 ```
@@ -35,6 +36,7 @@ The price tracker has the following component:
 ![Screenshot](mvp_design.png)
 
 ## Future Work
+- X-axis of the graph is epoch time, need to make it into timestamp for better readability.
 - Add unit tests & integration tests
 - Make RPC call more reliable with retry logic and better error handling
 - Make file bucket with finer gradularity, something like `/data/btceur/YYYY-MM-DD/HH/mm/<filename>.csv`, so that the system will allow stats for smaller time range like std of past 10min. It is also faster and more accurate when reading data with a given range.
