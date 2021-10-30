@@ -43,8 +43,20 @@ The price tracker has the following component:
 - Exisiting system read data for past 24h every time which is suboptimal, better way would be store the data read in a cache, every time we want to refresh the graph, only fetch the new data by setting the time range to be [most_recent_datetime in cache, current_datetime]
 
 ## Scalability
-MVP design is not going to scale with more types of currency and more frequent data fetching, because the scheduler will quickly use up the CPU cycles.
+MVP design is not going to scale with more types of currency and more frequent data fetching, because the scheduler in one machine will quickly use up the CPU cycles. A better way is to have a cluster of workder nodes, with each only handles one metric (i.e. btceur). If we want to hit REST API every 1 second instead of 1 min, it shouldn't be an issue for one worder node. Zookeeper can be set aside to monitor the health of the cluster, and replace node when it turns unhealthy.
 
-Scalability: what would you change if you needed to track many metrics? What if you needed to sample them more frequently? what if you had many users accessing your dashboard to view metrics?
-Testing: how would you extend testing for an application of this kind (beyond what you implemented)?
-Feature request: to help the user identify opportunities in real-time, the app will send an alert whenever a metric exceeds 3x the value of its average in the last 1 hour. For example, if the volume of GOLD/BTC averaged 100 in the last hour, the app would send an alert in case a new volume data point exceeds 300. Please write a short proposal on how you would implement this feature request.
+We also should avoid reading csv files for data. Instead, use a time series database such as OpenTSDB for fast read and scalability. Aggregated metrics and recent data points should be stored in a cache as well for frequent read from users.
+
+## Testing
+The MVP system has no testing. Unit test at dev time is necessary. If phabricator is used at the company, let it trigger a build to run all unit time on each PR, and trigger another build to calculate test coverage rate. The build fails if any unit test failed or the test coverage is below a threshold. 
+
+For integration test, set up a sandbox environment with some fixtures. Also make sure the rollback mechanism is clear to developers in case anything bad makes it to prod.
+
+## Feature Requests: notification system
+1. Rule service: allow users to add what metrics, criteria and threshold they want to set for notification
+2. Notification service:
+   - allow users to select different methods of notification (sms, email, phone call)
+   - call rule service and notify when threshold is hit
+
+## Better Design
+![Screenshot](better_design.png)
