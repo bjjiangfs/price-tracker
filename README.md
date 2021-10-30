@@ -35,7 +35,15 @@ The price tracker has the following component:
 ![Screenshot](mvp_design.png)
 
 ## Future Work
+- Add unit tests & integration tests
+- Make RPC call more reliable with retry logic and better error handling
+- Make file bucket with finer gradularity, something like `/data/btceur/YYYY-MM-DD/HH/mm/<filename>.csv`, so that the system will allow stats for smaller time range like std of past 10min. It is also faster and more accurate when reading data with a given range.
+- Move csv file to S3 instead of in local machine. 
+  - Could also switch from csv to a relational DB for sharding and indexing
+- Exisiting system read data for past 24h every time which is suboptimal, better way would be store the data read in a cache, every time we want to refresh the graph, only fetch the new data by setting the time range to be [most_recent_datetime in cache, current_datetime]
 
+## Scalability
+MVP design is not going to scale with more types of currency and more frequent data fetching, because the scheduler will quickly use up the CPU cycles.
 
 Scalability: what would you change if you needed to track many metrics? What if you needed to sample them more frequently? what if you had many users accessing your dashboard to view metrics?
 Testing: how would you extend testing for an application of this kind (beyond what you implemented)?
